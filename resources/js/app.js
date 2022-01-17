@@ -6,8 +6,23 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 require('./bootstrap');
 require('./alpine')
 
-window.create3DBox = function testViewer(filePath, htmlElementName) {
+window.tasks = {};
+
+window.clearTasks = async function clearTasks() {
+    Object.keys(window.tasks).forEach(key => {
+        window.tasks[key] = false;
+        console.log('stopping task ' + key)
+    });
+}
+
+window.create3DBox = function create3DBox(filePath, htmlElementName) {
     let htmlElement = document.getElementById(htmlElementName)
+
+    if (htmlElement === null) {
+        console.warn('null html element for ' + htmlElementName)
+        return;
+    }
+
     let camera = new THREE.PerspectiveCamera(70, (htmlElement.clientWidth / htmlElement.clientHeight), 1, 1000)
 
     let renderer = new THREE.WebGLRenderer({
@@ -35,6 +50,10 @@ window.create3DBox = function testViewer(filePath, htmlElementName) {
     let scene = new THREE.Scene();
     scene.add(new THREE.HemisphereLight(0xffffff, 1.5));
 
+    let taskId = Date.now() + Math.random();
+
+    window.tasks[taskId] = true;
+
     (new STLLoader()).load(filePath, function (geometry) {
         let material = new THREE.MeshPhongMaterial({
             color: 0x00d1e2,
@@ -57,6 +76,10 @@ window.create3DBox = function testViewer(filePath, htmlElementName) {
         camera.position.z = largestDimension * 2.5; // corresponds to default zoom
 
         let animate = function () {
+            if (!window.tasks[taskId]) {
+                console.log('task ' + taskId + ' stopped')
+                return;
+            }
             requestAnimationFrame(animate);
             controls.update();
             renderer.render(scene, camera);
@@ -64,4 +87,6 @@ window.create3DBox = function testViewer(filePath, htmlElementName) {
 
         animate();
     });
+
+    return taskId;
 }

@@ -3,27 +3,64 @@
 namespace App\Http\Livewire;
 
 use App\Models\Model3D;
+use App\Models\Tag;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use Storage;
 
 class ComponentsTable extends Component
 {
 
     use WithFileUploads;
 
-    public $models;
-
     public $newFiles = [];
 
-    public function mount($models)
+    public ?string $newTag = null;
+
+    public string $search = '';
+
+    public array $selectedTags = [];
+
+    public function mount()
     {
-        $this->models = $models;
+        $this->emit('reloadJs');
     }
 
-    public function download($filePath)
+    public function setTagSelected(int $tagId)
     {
-        return \Storage::disk('public')->download($filePath);
+        foreach ($this->selectedTags as $key => $tag) {
+            if ($tag === $tagId) { // element found in array
+                unset($this->selectedTags[$key]);
+                $this->emit('reloadJs');
+                return;
+            }
+        }
+
+        // element not found in array
+        $this->selectedTags[] = $tagId;
+
+        $this->emit('reloadJs');
+    }
+
+    public function startCreatingTag()
+    {
+        $this->newTag = '';
+        $this->emit('change-focus', 'new-tag');
+    }
+
+    public function createTag()
+    {
+        Tag::create([
+            "name" => $this->newTag,
+        ]);
+
+        $this->newTag = null;
+    }
+
+    public function updatedSearch()
+    {
+        $this->emit('reloadJs');
     }
 
     public function updatedNewFiles()
@@ -62,8 +99,17 @@ class ComponentsTable extends Component
 
     public function render()
     {
+        $tagsQuery = Model3D::where('name', 'LIKE', "%" . $this->search . "%");
+
+        if (count($this->selectedTags) > 0) {
+            $tagsQuery->whereHas('tags', function ($q) {
+                    $q->whereIn('id', $this->selectedTags);
+            });
+        }
+
         return view('livewire.components-table', [
-            'models' => $this->models
+            'models' => $tagsQuery->get(),
+            'tags' => Tag::all(),
         ]);
     }
 }

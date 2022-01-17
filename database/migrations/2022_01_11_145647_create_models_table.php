@@ -17,6 +17,7 @@ class CreateModelsTable extends Migration
             $table->id();
 
             $table->string('name');
+            $table->text('description')->nullable();
             $table->string('path');
             $table->integer('size');
             $table->integer('last_edit');
