@@ -1,7 +1,12 @@
 @extends('layout')
 
-@livewireScripts
-@livewireStyles
+@section('scripts') <!-- should not be done this way -->
+    @livewireScripts
+@endsection
+
+@section('styles') <!-- should not be done this way -->
+    @livewireStyles
+@endsection
 
 @section('content')
 

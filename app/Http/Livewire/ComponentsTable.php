@@ -74,6 +74,10 @@ class ComponentsTable extends Component
     public function updatedNewFiles()
     {
         foreach ($this->newFiles as $file) {
+            if (!str_ends_with($file->getClientOriginalName(), '.stl') && !str_ends_with($file->getClientOriginalName(), '.obj')) {
+                continue;
+            }
+
             if (Storage::disk('public')->missing($file->getClientOriginalName())) {
                 $orig = $file->getFilename();
                 $file->storeAs('/', $file->getClientOriginalName(), 'public');
@@ -85,7 +89,7 @@ class ComponentsTable extends Component
                     'last_edit' => time(),
                 ]);
 
-                 // remove temporary files
+                Storage::delete('livewire-tmp/' . $orig);
             } else {
                 $orig = $file->getFilename();
                 $file->storeAs('/', $file->getClientOriginalName(), 'public');
@@ -95,22 +99,22 @@ class ComponentsTable extends Component
                     'size' => $file->getSize(),
                     'last_edit' => time(),
                 ]);
+
+                Storage::delete('livewire-tmp/' . $orig);
             }
         }
-
-        Storage::delete('livewire-tmp/' . $orig);
 
         $this->newFiles = [];
 
         $this->render();
         $this->emit('updated');
+        $this->emit('reloadJs');
     }
 
     public function rules()
     {
         return [
-            'newFiles' => 'max:2048000',
-            'files' => 'file|max:2048000',
+            'newFiles.*' => 'max:524288',
         ];
     }
 

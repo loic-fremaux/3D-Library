@@ -1,10 +1,10 @@
-<div class="flex flex-row">
-    <div class="md:w-3/12">
+<div class="flex lg:flex-row flex-col-reverse">
+    <div class="lg:w-3/12">
 
         @include('includes.dropzone')
 
     </div>
-    <div class="md:w-9/12">
+    <div class="lg:w-9/12 w-full">
         <script>
             Livewire.on('change-focus', function (id) {
                 window.document.getElementById(id).focus();
@@ -21,7 +21,7 @@
         <div class="flex items-center justify-center my-8">
             @foreach($tags as $tag)
                 <span
-                    class="inline-flex items-center justify-center px-2 py-1 mr-2 text-xs font-bold leading-none rounded-full pointer
+                    class="inline-flex px-2 py-1 mr-2 text-xs font-bold leading-none rounded-full pointer
                         @if(in_array($tag->id, $selectedTags)) text-white bg-blue-500 @else text-white bg-gray-500 @endif"
                     wire:click="setTagSelected({{ $tag->id }})">
                     {{ $tag->name }}
@@ -36,7 +36,7 @@
             @else
                 <input
                     class="shadow appearance-none bg-white border border-blue-500 rounded text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-                    id="new-tag" type="text" wire:model.defer="newTag" wire:keydown.prevent.enter="createTag"/>
+                    id="new-tag" type="text" wire:model.defer="newTag" wire:keydown.enter="createTag"/>
                 <button
                     class="bg-red-500 hover:bg-red-700 text-white text-xs font-bold py-1 px-2 w-16 mx-1"
                     wire:click="cancelTagCreation">Cancel

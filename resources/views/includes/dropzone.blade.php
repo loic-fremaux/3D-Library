@@ -14,7 +14,7 @@
         <div id="zdrop" class="fileuploader">
             <div id="upload-label" style="width: 200px;">
                 <span class="title">Drop .stl or .obj files here</span>
-                <span> Max size : 2GB </span>
+                <span> Max size : 512MB </span>
             </div>
         </div>
 
