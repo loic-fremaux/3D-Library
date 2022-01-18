@@ -24,7 +24,6 @@ class ComponentsTable extends Component
 
     public function mount()
     {
-        $this->emit('reloadJs');
     }
 
     public function setTagSelected(int $tagId)

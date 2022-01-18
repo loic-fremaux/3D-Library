@@ -1,22 +1,32 @@
 import * as THREE from "three";
 
-import { STLLoader} from "three/examples/jsm/loaders/STLLoader";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import {STLLoader} from "three/examples/jsm/loaders/STLLoader";
+import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 
 require('./bootstrap');
 require('./alpine')
 
 window.tasks = {};
+window.models = {};
 
 window.clearTasks = async function clearTasks() {
     Object.keys(window.tasks).forEach(key => {
-        window.tasks[key] = false;
-        console.log('stopping task ' + key)
+        if (document.getElementById(window.tasks[key]) === null) {
+            console.log('stopping task ' + window.tasks[key])
+            window.tasks[key] = null;
+        }
     });
 }
 
 window.create3DBox = function create3DBox(filePath, htmlElementName) {
     let htmlElement = document.getElementById(htmlElementName)
+
+    for (const task in Object.values(window.tasks)) {
+        if (task == htmlElementName) {
+            console.log(htmlElementName + ' already exists')
+            return;
+        }
+    }
 
     if (htmlElement === null) {
         console.warn('null html element for ' + htmlElementName)
@@ -52,7 +62,7 @@ window.create3DBox = function create3DBox(filePath, htmlElementName) {
 
     let taskId = Date.now() + Math.random();
 
-    window.tasks[taskId] = true;
+    window.tasks[taskId] = htmlElementName;
 
     (new STLLoader()).load(filePath, function (geometry) {
         let material = new THREE.MeshPhongMaterial({
@@ -76,7 +86,7 @@ window.create3DBox = function create3DBox(filePath, htmlElementName) {
         camera.position.z = largestDimension * 2.5; // corresponds to default zoom
 
         let animate = function () {
-            if (!window.tasks[taskId]) {
+            if (window.tasks[taskId] === null) {
                 console.log('task ' + taskId + ' stopped')
                 return;
             }

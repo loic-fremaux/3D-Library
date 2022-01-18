@@ -41,21 +41,9 @@
             <small class="text-muted">Size : {{ \App\Http\Livewire\ModelTable::humanFileSize($model->size) }}</small>
         </p>
     </div>
-    <div class="md:w-1/5" wire:ignore>
-        <div id="model_{{ $model->name }}" class="bg-white"
-             style="height: 15em; border-top-right-radius: 3px; border-bottom-right-radius: 3px">
+    <div class="md:w-1/5">
+        <div id="model_{{ $model->name }}" data-link="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($model->path) }}" class="bg-white 3d-model"
+             style="height: 15em; border-top-right-radius: 3px; border-bottom-right-radius: 3px" wire:ignore>
         </div>
-        <script type="text/javascript">
-
-            document.addEventListener("DOMContentLoaded", function () {
-                console.log('created')
-                create3DBox("{{ \Illuminate\Support\Facades\Storage::disk('public')->url($model->path) }}", "model_{{ $model->name }}")
-            });
-
-            window.livewire.on('reloadJs', event => {
-                console.log('reloading js {{ $model->name }}')
-                create3DBox("{{ \Illuminate\Support\Facades\Storage::disk('public')->url($model->path) }}", "model_{{ $model->name }}")
-            });
-        </script>
     </div>
 </div>
