@@ -16,6 +16,8 @@ class ModelTable extends Component
 
     public ?string $newTagName = null;
 
+    public ?int $tagRemoveId = null;
+
     public function mount($model)
     {
         $this->model = $model;
@@ -25,6 +27,10 @@ class ModelTable extends Component
     {
         $this->editing = $editing;
         $this->model->description = $this->model->getOriginal('description');
+
+        if ($editing) {
+            $this->emit('change-focus', 'model-description-editing-' . $this->model->id);
+        }
     }
 
     public function saveDescription()
@@ -40,15 +46,35 @@ class ModelTable extends Component
         $this->emit('change-focus', 'add-tag-' . $this->model->id);
     }
 
+    public function cancelTagResearch()
+    {
+        $this->newTagName = null;
+    }
+
     public function addTag()
     {
         $tag = \App\Models\Tag::where('name', $this->newTagName)->first();
         if ($tag === null) {
-            dd($tag . ' is null');
+            dd('tag is null');
         }
 
         $this->model->tags()->attach($tag);
         $this->newTagName = null;
+    }
+
+    public function detachTag(int $id)
+    {
+        $tag = \App\Models\Tag::find($id);
+        if ($tag === null) {
+            dd('tag is null');
+        }
+
+        if ($this->tagRemoveId === null || $this->tagRemoveId !== $id) {
+            $this->tagRemoveId = $id;
+        } else {
+            $this->model->tags()->detach($tag);
+            $this->tagRemoveId = null;
+        }
     }
 
     public function download($filePath)

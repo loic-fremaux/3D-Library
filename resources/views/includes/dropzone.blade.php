@@ -1,9 +1,9 @@
 <div
-    class="flex h-screen justify-center items-center"
+    class="flex my-[10.5rem] justify-center items-center"
     x-data="drop_file_component()">
     <div
-        class="py-6 w-96 rounded border-dashed border-2 flex flex-col justify-center items-center"
-        x-bind:class="dropingFile ? 'bg-gray-400 border-gray-500' : 'border-gray-500 bg-gray-200'"
+        class="py-6 w-96 rounded flex flex-col justify-center items-center"
+        x-bind:class="dropingFile ? 'bg-white border-gray-200' : 'border-gray-400 bg-white'"
         x-on:drop="dropingFile = false"
         x-on:drop.prevent="
                 handleFileDrop($event)
@@ -11,11 +11,10 @@
         x-on:dragover.prevent="dropingFile = true"
         x-on:dragleave.prevent="dropingFile = false">
 
-
         <div id="zdrop" class="fileuploader">
             <div id="upload-label" style="width: 200px;">
-                <span class="title">Déposez un fichier ici</span>
-                <span> Taille max : 2Go </span>
+                <span class="title">Drop .stl or .obj files here</span>
+                <span> Max size : 2GB </span>
             </div>
         </div>
 
@@ -28,7 +27,7 @@
                 <path class="opacity-75" fill="currentColor"
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            <div>Chargement en cours...</div>
+            <div>Loading content...</div>
         </div>
     </div>
 </div>

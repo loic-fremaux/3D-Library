@@ -48,8 +48,17 @@ class ComponentsTable extends Component
         $this->emit('change-focus', 'new-tag');
     }
 
+    public function cancelTagCreation()
+    {
+        $this->newTag = null;
+    }
+
     public function createTag()
     {
+        if (Tag::where('name', $this->newTag)->count() > 0) {
+            dd('tag already exists');
+        }
+
         Tag::create([
             "name" => $this->newTag,
         ]);
@@ -76,11 +85,20 @@ class ComponentsTable extends Component
                     'last_edit' => time(),
                 ]);
 
-                Storage::delete('livewire-tmp/' . $orig); // remove temporary files
+                 // remove temporary files
             } else {
-                // dd('file already exists');
+                $orig = $file->getFilename();
+                $file->storeAs('/', $file->getClientOriginalName(), 'public');
+
+                Model3D::where('name', $file->getClientOriginalName())->update([
+                    'path' => '/' . $file->getClientOriginalName(),
+                    'size' => $file->getSize(),
+                    'last_edit' => time(),
+                ]);
             }
         }
+
+        Storage::delete('livewire-tmp/' . $orig);
 
         $this->newFiles = [];
 
