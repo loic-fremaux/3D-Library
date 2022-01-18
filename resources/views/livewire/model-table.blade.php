@@ -2,14 +2,20 @@
     <div class="bg-white w-full lg:w-4/5 text-left p-6 p-4 space-y-2 flex flex-col justify-between">
         <div class="flex flex-col md:flex-row justify-between">
             <h2 class="text-1xl md:text-2xl font-semibold text-gray-700 capitalize">{{ $model->name }}</h2>
-            <button
-                class="bg-grey hover:bg-grey-400 border border-2 border-grey font-bold py-2 px-4 text-black rounded inline-flex items-center"
-                wire:click="download('{{ $model->path }}')">
-                <svg class="fill-current w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                    <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/>
-                </svg>
-                <span>Download</span>
-            </button>
+            <div>
+                <button
+                    class="border-2 border-red-500 font-bold py-2 px-4 rounded inline-flex items-center
+                    @if($modelRemoveId === $model->id) bg-red-500 text-white
+                    @else hover:bg-red-500 hover:text-white text-red-500  @endif"
+                    wire:click="removeModel({{ $model->id }})">
+                    Remove
+                </button>
+                <button
+                    class="border-2 border-gray-600 hover:bg-gray-100 font-bold py-2 px-4 text-gray-600 rounded inline-flex items-center"
+                    wire:click="download('{{ $model->path }}')">
+                    Download
+                </button>
+            </div>
         </div>
 
         @if($editing)

@@ -18,6 +18,8 @@ class ModelTable extends Component
 
     public ?int $tagRemoveId = null;
 
+    public ?int $modelRemoveId = null;
+
     public function mount($model)
     {
         $this->model = $model;
@@ -74,6 +76,21 @@ class ModelTable extends Component
         } else {
             $this->model->tags()->detach($tag);
             $this->tagRemoveId = null;
+        }
+    }
+
+    public function removeModel(int $id)
+    {
+        if ($this->modelRemoveId === null || $this->modelRemoveId !== $id) {
+            $this->modelRemoveId = $id;
+        } else {
+            $model = Model3D::find($id);
+            Storage::disk('public')->delete($model->path);
+
+            $model->delete();
+
+            $this->modelRemoveId = null;
+            $this->emit('renderParent');
         }
     }
 

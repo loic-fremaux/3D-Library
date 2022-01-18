@@ -22,8 +22,15 @@ class ComponentsTable extends Component
 
     public array $selectedTags = [];
 
+    protected $listeners = ['renderParent'];
+
     public function mount()
     {
+    }
+
+    public function renderParent()
+    {
+        $this->render();
     }
 
     public function setTagSelected(int $tagId)
